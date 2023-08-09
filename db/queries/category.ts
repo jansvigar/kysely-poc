@@ -1,4 +1,4 @@
-import db from "..";
+import db, { createDBConnection } from "..";
 import { Categories } from "../generated/db";
 
 export async function insertCategory(
@@ -8,7 +8,8 @@ export async function insertCategory(
 }
 
 export async function getAllCategories() {
-  return await db.selectFrom("categories").selectAll().execute();
+  const _db = createDBConnection();
+  return await _db.selectFrom("categories").selectAll().execute();
 }
 
 export async function getCategoryById(categoryId: number) {
