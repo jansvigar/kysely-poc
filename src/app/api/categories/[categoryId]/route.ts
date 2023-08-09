@@ -10,13 +10,28 @@ import { Categories } from "../../../../../db/generated/db";
 export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.nextUrl);
-  const categoryId = searchParams.get("categoryId");
-  const category = categoryId
-    ? await getCategoryById(parseInt(categoryId, 10))
-    : null;
+  try {
+    const { searchParams } = new URL(request.nextUrl);
+    const categoryId = searchParams.get("categoryId");
+    const category = categoryId
+      ? await getCategoryById(parseInt(categoryId, 10))
+      : null;
 
-  return new Response(JSON.stringify(category || {}, null, 2));
+    return new Response(JSON.stringify(category, null, 2));
+  } catch (error) {
+    console.error(error);
+    return new Response(
+      JSON.stringify(
+        {
+          success: false,
+          message: "An error occurred while retrieving the category.",
+        },
+        null,
+        2,
+      ),
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
