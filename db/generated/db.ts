@@ -11,21 +11,6 @@ export interface Categories {
   name: string;
 }
 
-export interface OrderItems {
-  order_item_id: Generated<number>;
-  order_id: number;
-  product_id: number;
-  quantity: number;
-  price: number;
-}
-
-export interface Orders {
-  order_id: Generated<number>;
-  user_id: number;
-  created_at: Generated<Timestamp>;
-  status: string;
-}
-
 export interface Products {
   product_id: Generated<number>;
   name: string;
@@ -45,8 +30,6 @@ export interface Users {
 
 export interface DB {
   categories: Categories;
-  order_items: OrderItems;
-  orders: Orders;
   products: Products;
   users: Users;
 }
