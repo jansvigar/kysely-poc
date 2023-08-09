@@ -1,16 +1,19 @@
-import db from "..";
+import { createDBConnection } from "..";
 import { Products } from "../generated/db";
 
 export async function insertProduct(product: Omit<Products, "product_id">) {
-  await db.insertInto("products").values(product).execute();
+  const _db = createDBConnection();
+  await _db.insertInto("products").values(product).execute();
 }
 
 export async function getAllProducts() {
-  return await db.selectFrom("products").selectAll().execute();
+  const _db = createDBConnection();
+  return await _db.selectFrom("products").selectAll().execute();
 }
 
 export async function getProductById(productId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .selectFrom("products")
     .selectAll()
     .where("product_id", "=", productId)
@@ -21,7 +24,8 @@ export async function updateProductById(
   productId: number,
   updatedFields: Partial<Omit<Products, "product_id">>,
 ) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .updateTable("products")
     .set(updatedFields)
     .where("product_id", "=", productId)
@@ -29,14 +33,16 @@ export async function updateProductById(
 }
 
 export async function deleteProductById(productId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .deleteFrom("products")
     .where("product_id", "=", productId)
     .executeTakeFirst();
 }
 
 export async function getProductsByCategory(categoryId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .selectFrom("products")
     .selectAll()
     .where("category_id", "=", categoryId)

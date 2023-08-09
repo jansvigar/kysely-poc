@@ -1,16 +1,19 @@
-import db from "..";
+import { createDBConnection } from "..";
 import { Users } from "../generated/db";
 
 export async function insertUser(user: Omit<Users, "user_id" | "created_at">) {
-  await db.insertInto("users").values(user).execute();
+  const _db = createDBConnection();
+  await _db.insertInto("users").values(user).execute();
 }
 
 export async function getAllUsers() {
-  return await db.selectFrom("users").selectAll().execute();
+  const _db = createDBConnection();
+  return await _db.selectFrom("users").selectAll().execute();
 }
 
 export async function getUserById(userId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .selectFrom("users")
     .selectAll()
     .where("user_id", "=", userId)
@@ -21,7 +24,8 @@ export async function updateUserById(
   userId: number,
   updatedFields: Partial<Omit<Users, "user_id" | "created_at">>,
 ) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .updateTable("users")
     .set(updatedFields)
     .where("user_id", "=", userId)
@@ -29,7 +33,8 @@ export async function updateUserById(
 }
 
 export async function deleteUserById(userId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .deleteFrom("users")
     .where("user_id", "=", userId)
     .executeTakeFirst();

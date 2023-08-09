@@ -1,10 +1,11 @@
-import db, { createDBConnection } from "..";
+import { createDBConnection } from "..";
 import { Categories } from "../generated/db";
 
 export async function insertCategory(
   category: Omit<Categories, "category_id">,
 ) {
-  await db.insertInto("categories").values(category).execute();
+  const _db = createDBConnection();
+  await _db.insertInto("categories").values(category).execute();
 }
 
 export async function getAllCategories() {
@@ -13,7 +14,8 @@ export async function getAllCategories() {
 }
 
 export async function getCategoryById(categoryId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .selectFrom("categories")
     .selectAll()
     .where("category_id", "=", categoryId)
@@ -24,7 +26,8 @@ export async function updateCategoryById(
   categoryId: number,
   updatedFields: Partial<Omit<Categories, "category_id">>,
 ) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .updateTable("categories")
     .set(updatedFields)
     .where("category_id", "=", categoryId)
@@ -32,7 +35,8 @@ export async function updateCategoryById(
 }
 
 export async function deleteCategoryById(categoryId: number) {
-  return await db
+  const _db = createDBConnection();
+  return await _db
     .deleteFrom("categories")
     .where("category_id", "=", categoryId)
     .executeTakeFirst();
