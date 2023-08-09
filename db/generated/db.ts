@@ -35,18 +35,6 @@ export interface Products {
   category_id: number;
 }
 
-export interface ShoppingCart {
-  cart_id: Generated<number>;
-  user_id: number;
-}
-
-export interface ShoppingCartItem {
-  item_id: Generated<number>;
-  cart_id: number;
-  product_id: number;
-  quantity: number;
-}
-
 export interface Users {
   user_id: Generated<number>;
   username: string;
@@ -60,7 +48,5 @@ export interface DB {
   order_items: OrderItems;
   orders: Orders;
   products: Products;
-  shopping_cart: ShoppingCart;
-  shopping_cart_item: ShoppingCartItem;
   users: Users;
 }
