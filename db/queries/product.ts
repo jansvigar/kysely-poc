@@ -48,3 +48,13 @@ export async function getProductsByCategory(categoryId: number) {
     .where("category_id", "=", categoryId)
     .execute();
 }
+
+export async function getAllProductsWithCategories() {
+  const _db = createDBConnection();
+  return await _db
+    .selectFrom("products")
+    .innerJoin("categories as c", "c.category_id", "products.category_id")
+    .select(["c.name as category_name"])
+    .selectAll("products")
+    .execute();
+}
