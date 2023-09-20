@@ -46,7 +46,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_PAGES_EDIT_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ancient-surf-33850443
+          projectName: kysely-poc
           directory: .vercel/output/static
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
