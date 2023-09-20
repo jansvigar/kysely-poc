@@ -30,11 +30,11 @@ jobs:
           branch_name: ${{ github.head_ref || github.ref_name }}
           api_key: ${{ secrets.NEON_API_KEY }}
 
-      - name: Run Drizzle-ORM Migrations
-        run: |
-          touch .env
-          echo DATABASE_URL=${{ steps.create_branch.outputs.db_url_with_pooler}}/neondb >> .env
-          yarn run-migrations
+      # - name: Run Drizzle-ORM Migrations
+      #   run: |
+      #     touch .env
+      #     echo DATABASE_URL=${{ steps.create_branch.outputs.db_url_with_pooler}}/neondb >> .env
+      #     yarn run-migrations
       
 
       - name: Build Project Artifacts
