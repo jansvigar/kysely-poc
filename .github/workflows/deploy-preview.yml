@@ -10,19 +10,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get PR sha
-        id: get_pull_request_sha
-        run: |
-          pull_request_sha=$(jq --raw-output .pull_request.base.sha "$GITHUB_EVENT_PATH" | cut -c1-8)
-          echo "pull_request_sha=${pull_request_sha}" >> $GITHUB_OUTPUT
-          echo $pull_request_sha
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --prefer-offline --frozen-lockfile
+
+      # - name: Get PR sha
+      #   id: get_pull_request_sha
+      #   run: |
+      #     pull_request_sha=$(jq --raw-output .pull_request.base.sha "$GITHUB_EVENT_PATH" | cut -c1-8)
+      #     echo "pull_request_sha=${pull_request_sha}" >> $GITHUB_OUTPUT
+      #     echo $pull_request_sha
 
       - name: Neon Database Create Branch Action
         uses: neondatabase/create-branch-action@v4
         id: create_branch
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
-          branch_name: ${{steps.get_pull_request_sha.outputs.pull_request_sha}}
+          branch_name: ${{ github.head_ref || github.ref_name }}
           api_key: ${{ secrets.NEON_API_KEY }}
 
       - name: Run Drizzle-ORM Migrations
@@ -31,11 +37,6 @@ jobs:
           echo DATABASE_URL=${{ steps.create_branch.outputs.db_url_with_pooler}}/neondb >> .env
           yarn run-migrations
       
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version-file: .nvmrc
-      #     cache: yarn
-      # - run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Build Project Artifacts
         run: npx @cloudflare/next-on-pages@1
