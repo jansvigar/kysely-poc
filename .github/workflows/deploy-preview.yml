@@ -37,7 +37,7 @@ jobs:
       #     yarn run-migrations
       - name: Write Neon Database URL to KV
         run: |
-          echo -e "CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_API_TOKEN }}\nCLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" >> .env
+          echo -e "CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_KV_EDIT_API_TOKEN }}\nCLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" >> .env
           npx wrangler kv:key put ${{ github.head_ref || github.ref_name }} ${{ steps.create_branch.outputs.db_url_with_pooler}} --namespace-id=60aa73f01b8646e596c40c13060458e9
 
       - name: Build Project Artifacts
