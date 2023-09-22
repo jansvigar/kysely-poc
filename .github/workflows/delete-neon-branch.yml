@@ -29,7 +29,7 @@ jobs:
       uses: neondatabase/delete-branch-action@v3
       with:
         project_id: ${{ secrets.NEON_PROJECT_ID }}
-        branch: ${{ steps.get_branch_id.outputs.branch_id }}
+        branch: br-twilight-water-25284652
         api_key: ${{ secrets.NEON_API_KEY }}
 
     - name: Delete KV entry
