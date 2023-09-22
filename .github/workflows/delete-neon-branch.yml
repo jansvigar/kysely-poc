@@ -8,15 +8,36 @@ jobs:
   delete-neon-branch:
     runs-on: ubuntu-latest
     steps:
-    - name: Delete Neon Branch
-      uses: neondatabase/delete-branch-by-name-action.yml@main
-      with:
-        project_id: ${{ secrets.NEON_PROJECT_ID }}
-        branch_name: ${{ github.head_ref || github.ref_name }}
-        api_key: ${{ secrets.NEON_API_KEY }}
+      - shell: bash
+        id: get_branch_id
+        run: |
+          branch_id=$(curl --silent \
+            "https://console.neon.tech/api/v2/projects/${{ secrets.NEON_PROJECT_ID }}/branches" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --header "Authorization: Bearer ${{ secrets.NEON_API_KEY }}" \
+            | jq -r .branches \
+            | jq -c '.[] | select(.name | contains("'${{ github.head_ref || github.ref_name }}'")) .id' \
+            | jq -r \
+            ) \
+            
+          echo "branch_id=${branch_id}" >> $GITHUB_OUTPUT
+          
+      - shell: bash
+        name: Echo Branch ID
+        run: |
+          branch_id=${{ steps.get_branch_id.outputs.branch_id }}
+          echo $branch_id
 
-    - name: Delete KV entry
-      run: |
-        echo -e "CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_KV_EDIT_API_TOKEN }}\nCLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" >> .env
-        npx wrangler kv:key delete ${{ github.head_ref || github.ref_name }} --namespace-id=60aa73f01b8646e596c40c13060458e9
+      - name: Delete Neon Branch by Id
+        uses: neondatabase/delete-branch-action@v2
+        with:
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          branch_id: ${{ steps.get_branch_id.outputs.branch_id }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+
+      - name: Delete KV entry
+        run: |
+          echo -e "CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_KV_EDIT_API_TOKEN }}\nCLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" >> .env
+          npx wrangler kv:key delete ${{ github.head_ref || github.ref_name }} --namespace-id=60aa73f01b8646e596c40c13060458e9
       
