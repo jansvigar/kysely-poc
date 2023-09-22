@@ -19,7 +19,7 @@ jobs:
           --header "Content-Type: application/json" \
           --header "Authorization: Bearer ${{ secrets.NEON_API_KEY }}" \
           | jq -r .branches \
-          | jq -c '.[] | select(.name | contains("'${{ github.head_ref || github.ref_name }}'")) .id' \
+          | jq -c '.[] | select(.name | contains("${{ github.head_ref || github.ref_name }}")) .id' \
           | jq -r \
         ) \
         echo "branch_id=${branch_id}" >> "$GITHUB_OUTPUT"
@@ -31,7 +31,7 @@ jobs:
       uses: neondatabase/delete-branch-action@v3
       with:
         project_id: ${{ secrets.NEON_PROJECT_ID }}
-        branch: br-twilight-water-25284652
+        branch: ${{ steps.get_branch_id.outputs.branch_id }}
         api_key: ${{ secrets.NEON_API_KEY }}
 
     - name: Delete KV entry
