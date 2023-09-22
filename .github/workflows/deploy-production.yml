@@ -1,0 +1,33 @@
+name: Deploy Production
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-production:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+      - run: yarn install --prefer-offline --frozen-lockfile
+
+      - name: Build Project Artifacts
+        run: npx @cloudflare/next-on-pages@1
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/pages-action@1
+        id: deploy-to-cloudflare
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_EDIT_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: kysely-poc
+          directory: .vercel/output/static
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
