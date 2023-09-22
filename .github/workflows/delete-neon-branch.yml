@@ -21,7 +21,8 @@ jobs:
           | jq -r .branches \
           | jq -c '.[] | select(.name | contains("'${{ github.head_ref || github.ref_name }}'")) .id' \
           | jq -r \
-          ) \
+        ) \
+        echo ${branch_id} \
         echo "branch_id=${branch_id}" >> $GITHUB_OUTPUT
 
     - name: Delete Neon Branch
